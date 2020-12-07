@@ -67,7 +67,7 @@ ___
 * Then, create a postman environment for our collection variables: [how to](https://learning.postman.com/docs/sending-requests/managing-environments/#creating-environments)
     * bearer
     * host
-    * port
+    * port (only for localhost testing, remote heroku uses SSL, which's by default 443, so it's not required)
 
 * using the previous step to accquire the *bearer token*, add it to the postman environment variable **bearer**, this variable will be used by the authorization tab.
 
