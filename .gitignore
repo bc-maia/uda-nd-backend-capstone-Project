@@ -2,7 +2,7 @@
 # Created by https://www.toptal.com/developers/gitignore/api/vscode,python,flask
 # Edit at https://www.toptal.com/developers/gitignore?templates=vscode,python,flask
 
-!setup.sh
+setup.sh
 
 .vscode
 .vscode/
@@ -220,7 +220,5 @@ dmypy.json
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
-
-!setup.sh
 
 # End of https://www.toptal.com/developers/gitignore/api/vscode,python,flask
