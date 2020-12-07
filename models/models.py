@@ -84,11 +84,11 @@ class Dungeon(db.Model):
 
     @classmethod
     def find(cls, id) -> any:
-        return cls.query.filter(cls.id == id).one_or_none()
+        return cls.query.filter(cls.id == id).first()
 
     @classmethod
     def find_by(cls, level) -> any:
-        return cls.query.filter(cls.level == level).one_or_none()
+        return cls.query.filter(cls.level == level).first()
 
     """
     insert()
@@ -188,11 +188,11 @@ class Monster(db.Model):
 
     @classmethod
     def find(cls, id) -> any:
-        return cls.query.filter(cls.id == id).one_or_none()
+        return cls.query.filter(cls.id == id).first()
 
     @classmethod
     def find_by(cls, name) -> any:
-        return cls.query.filter(cls.name == name).one_or_none()
+        return cls.query.filter(cls.name == name).first()
 
     """
     insert()
