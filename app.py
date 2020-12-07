@@ -1,8 +1,8 @@
-import os
 from models import Dungeon, Monster
 from database import setup_db
-from flask import Flask, jsonify, abort, request, Response
+from flask import Flask, jsonify, abort, request, Response, redirect
 from flask_cors import CORS
+from auth import requires_auth, AuthError
 
 
 def create_app(test_config=None):
@@ -14,13 +14,14 @@ def create_app(test_config=None):
 
     @app.route("/")
     def get_greeting():
-        return "Monster-Dungeons API"
+        return "Welcome to Dungeon Monsters API - For usage, please refer to docs"
 
     """
     ### Routes: Dungeons
     """
 
     @app.route("/dungeons", methods=["GET"])
+    @requires_auth("get:dungeons")
     def get_dungeons():
         if dungeons := Dungeon.all():
             result = {"success": True, "Dungeons": dungeons}
@@ -29,6 +30,7 @@ def create_app(test_config=None):
             abort(404)
 
     @app.route("/dungeons/<id>", methods=["GET"])
+    @requires_auth("get:dungeon-info")
     def get_dungeon(id):
         if dungeon := Dungeon.find(id):
             result = {"success": True, "Dungeon": dungeon.long()}
@@ -37,6 +39,7 @@ def create_app(test_config=None):
             abort(404)
 
     @app.route("/dungeons", methods=["POST"])
+    @requires_auth("post:dungeons")
     def add_dungeon():
         payload = request.get_json()
         if not payload:
@@ -71,6 +74,7 @@ def create_app(test_config=None):
         return jsonify(dungeon.short())
 
     @app.route("/dungeons/<id>", methods=["PATCH"])
+    @requires_auth("patch:dungeons")
     def update_dungeon(id):
         payload = request.get_json()
         if not payload:
@@ -105,6 +109,7 @@ def create_app(test_config=None):
             abort(404)
 
     @app.route("/dungeons/<id>", methods=["DELETE"])
+    @requires_auth("delete:dungeons")
     def remove_dungeon(id):
         if dungeon := Dungeon.find(id):
             level = dungeon.level
@@ -115,6 +120,7 @@ def create_app(test_config=None):
             abort(404)
 
     @app.route("/dungeons/<id>/monsters", methods=["GET"])
+    @requires_auth("get:dungeons-monsters")
     def get_dungeons_monster(id):
         if dungeon := Dungeon.find(id):
             response = {
@@ -127,6 +133,7 @@ def create_app(test_config=None):
             abort(404)
 
     @app.route("/dungeons/<id>/monsters", methods=["POST"])
+    @requires_auth("post:dungeons-monsters")
     def add_dungeons_monster(id):
         payload = request.get_json()
         monster_id = payload.get("monster_id", None)
@@ -145,6 +152,7 @@ def create_app(test_config=None):
             abort(404)
 
     @app.route("/dungeons/<id>/monsters", methods=["DELETE"])
+    @requires_auth("delete:dungeons-monsters")
     def remove_dungeons_monster(id):
         payload = request.get_json()
         monster_id = payload.get("monster_id", None)
@@ -167,6 +175,7 @@ def create_app(test_config=None):
     """
 
     @app.route("/monsters", methods=["GET"])
+    @requires_auth("get:monsters")
     def get_monsters():
         if monsters := Monster.all():
             result = {"success": True, "Monsters": monsters}
@@ -175,6 +184,7 @@ def create_app(test_config=None):
             abort(404)
 
     @app.route("/monsters/<id>", methods=["GET"])
+    @requires_auth("get:monster-info")
     def get_monster(id):
         if monster := Monster.find(id):
             result = {"success": True, "Monster": monster.long()}
@@ -183,6 +193,7 @@ def create_app(test_config=None):
             abort(404)
 
     @app.route("/monsters", methods=["POST"])
+    @requires_auth("post:monsters")
     def add_monster():
         payload = request.get_json()
         if not payload:
@@ -216,6 +227,7 @@ def create_app(test_config=None):
         return jsonify(monster.short())
 
     @app.route("/monsters/<id>", methods=["PATCH"])
+    @requires_auth("patch:monsters")
     def update_monster(id):
         payload = request.get_json()
         if monster := Monster.find(id):
@@ -247,6 +259,7 @@ def create_app(test_config=None):
             abort(404)
 
     @app.route("/monsters/<id>", methods=["DELETE"])
+    @requires_auth("delete:monsters")
     def remove_monster(id):
         if monster := Monster.find(id):
             name = monster.name
@@ -257,7 +270,7 @@ def create_app(test_config=None):
             abort(404)
 
     """
-    Error Handling
+    ### Error Handling
     """
 
     def format_handler(message: str, status: int) -> any:
@@ -298,18 +311,18 @@ def create_app(test_config=None):
         error handler should conform to general task above
     """
 
-    # @app.errorhandler(AuthError)
-    # def authentification_failed(AuthError):
-    #     return (
-    #         jsonify(
-    #             {
-    #                 "success": False,
-    #                 "error": AuthError.status_code,
-    #                 "message": AuthError.error,
-    #             }
-    #         ),
-    #         AuthError.status_code,
-    #     )
+    @app.errorhandler(AuthError)
+    def authentification_failed(AuthError):
+        return (
+            jsonify(
+                {
+                    "success": False,
+                    "error": AuthError.status_code,
+                    "message": AuthError.error,
+                }
+            ),
+            AuthError.status_code,
+        )
 
     @app.errorhandler(401)
     def unauthorized(error):
