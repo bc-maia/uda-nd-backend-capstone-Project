@@ -2,7 +2,7 @@
 # Created by https://www.toptal.com/developers/gitignore/api/vscode,python,flask
 # Edit at https://www.toptal.com/developers/gitignore?templates=vscode,python,flask
 
-setup.sh
+!setup.sh
 
 .vscode
 .vscode/
