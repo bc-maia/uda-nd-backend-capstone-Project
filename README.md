@@ -55,7 +55,7 @@ ___
 
 When cloning this repository, the database must be configured so this API can persist it's data using PostgreSQL database. For this project, any install will work from bare metal to dockerized database. Once created, you should update the **./setup.sh** file, changing the postgre connection URL unless a database is created using same username/password/database_name.
 
-After database created, run this command to create the database tables:
+After database created, run this command using **terminal** to create the database tables using migration version file:
 ```terminal
 python manage.py db upgrade
 ```
@@ -96,7 +96,7 @@ ___
 ```
 
 
-## API Routes Map
+## API Routes Mapping
 
 The complete route specification and required payloads are on this postman file:
 **./postman/Udacity_capstone_dungeon_monster.postman_collection.json**
@@ -154,3 +154,6 @@ POST /dungeons/1/monsters
 DELETE /dungeons/1/monsters
 ```
 * Remove a monster from a dungeon
+
+___
+
